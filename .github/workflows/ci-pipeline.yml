@@ -15,8 +15,8 @@ jobs:
 
     steps:
       # Step 1 — Scarica il codice del repository nel runner
-      # - name: Checkout repository
-      #   uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
       # Step 2 — Installa Node.js 18 sul runner
       - name: Setup Node.js
@@ -67,8 +67,8 @@ jobs:
     
     steps:
       # Step 1 — Anche qui serve il codice, anche se non essenziale
-      - name: Checkout repository
-        uses: actions/checkout@v4
+      # - name: Checkout repository
+      #   uses: actions/checkout@v4
 
       # Step 2 — Scarica l’artifact creato dal job BUILD
       - name: Download Docker image artifact
