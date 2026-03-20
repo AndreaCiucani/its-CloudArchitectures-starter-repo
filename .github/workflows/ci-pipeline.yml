@@ -1,10 +1,10 @@
 # Nome della pipeline che comparirà nella UI di GitHub Act
-name: CI + Docker Hub Delivery
+name: CI + Docker Build
 
 # Eventi che attivano la pipeline
 on:
-  push:          # Ogni push su qualsiasi branch
-  pull_request:  # Ogni pull request verso il repository
+  push:  
+    branches: ["main"]
 
 # -------------------------
 # JOB 1 — BUILD (CI)
@@ -12,6 +12,10 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest # Runner GitHub Actions basato su Ubuntu
+
+    env:
+      IMAGE_NAME: its-node-demo
+      DATE_TAG: ${{ github.run_id }}-${{ github.run_number }}
 
     steps:
       # Step 1 — Scarica il codice del repository nel runner
@@ -37,7 +41,8 @@ jobs:
       # Questa immagine NON sarà pubblicata, solo testata
       - name: Build Docker image
         run: |
-          docker build -t its-node-demo:latest .
+          docker build -t $IMAGE_NAME:${{ github.sha }} .
+          docker tag $IMAGE_NAME:${{ github.sha }} $IMAGE_NAME:${{ env.DATE_TAG }}
 
       # Step 6 — Salva l’immagine Docker in un file tar.gz
       # cosi può essere trasferita a un altro job
@@ -100,6 +105,7 @@ jobs:
 
 
       # Step 6 — Push finale verso Docker
-      - name: Push Docker image to Docker Hub
+      - name: Push images
         run: |
-          docker push ${{ secrets.DOCKERHUB_USERNAME }}/its-node-demo:latest
+          docker push $IMAGE_NAME:${{ github.sha }}
+          docker push $IMAGE_NAME:${{ env.DATE_TAG }}
