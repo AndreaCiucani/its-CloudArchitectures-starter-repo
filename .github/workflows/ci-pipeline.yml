@@ -39,16 +39,16 @@ jobs:
       # Questa immagine NON sarà pubblicata, solo testata
       - name: Build Docker image
         run: |
-          docker build -t its-node-demo:${{ github.sha }} .
-          docker tag its-node-demo:${{ github.sha }} its-node-demo:${{ env.DATE_TAG }}
+          docker build -t andreac1/its-node-demo:${{ github.sha }} .
+          docker tag andreac1/its-node-demo:${{ github.sha }} andreac1/its-node-demo:${{ env.DATE_TAG }}
 
       - name: Login to Docker Hub
         run: echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login -u "${{ secrets.DOCKERHUB_USERNAME }}" --password-stdin
 
       - name: Push images
         run: |
-          docker push its-node-demo:${{ github.sha }}
-          docker push its-node-demo:${{ env.DATE_TAG }}
+          docker push andreac1/its-node-demo:${{ github.sha }}
+          docker push andreac1/its-node-demo:${{ env.DATE_TAG }}
 
   # -------------------------
   # JOB 2 — DEPLOY (CD)
