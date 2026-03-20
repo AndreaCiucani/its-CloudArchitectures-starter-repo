@@ -15,8 +15,8 @@ jobs:
 
     steps:
       # Step 1 — Scarica il codice del repository nel runner
-      - name: Checkout repository
-        uses: actions/checkout@v4
+      # - name: Checkout repository
+      #   uses: actions/checkout@v4
 
       # Step 2 — Installa Node.js 18 sul runner
       - name: Setup Node.js
