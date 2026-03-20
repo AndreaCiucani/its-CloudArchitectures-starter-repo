@@ -1,16 +1,27 @@
 # Nome della pipeline che comparirà nella UI di GitHub Act
+<<<<<<< HEAD
 name: CI + Docker Build
 
 # Eventi che attivano la pipeline
 on:
   push:  
     branches: ["main"]
+=======
+name: CI - Docker Build
+
+# Eventi che attivano la pipeline
+on:
+  push:          
+    branches:
+      - main        # Solo se il push è sul branch "main"
+  
+>>>>>>> 77a503dba39934389839bae4f9d6a7152f12c6e0
 
 # -------------------------
 # JOB 1 — BUILD (CI)
 # -------------------------
 jobs:
-  build:
+  docker-build:
     runs-on: ubuntu-latest # Runner GitHub Actions basato su Ubuntu
 
     env:
@@ -41,30 +52,28 @@ jobs:
       # Questa immagine NON sarà pubblicata, solo testata
       - name: Build Docker image
         run: |
+<<<<<<< HEAD
           docker build -t $IMAGE_NAME:${{ github.sha }} .
           docker tag $IMAGE_NAME:${{ github.sha }} $IMAGE_NAME:${{ env.DATE_TAG }}
+=======
+          docker build -t andreac1/its-node-demo:${{ github.sha }} .
+          docker tag andreac1/its-node-demo:${{ github.sha }} andreac1/its-node-demo:${{ env.DATE_TAG }}
+>>>>>>> 77a503dba39934389839bae4f9d6a7152f12c6e0
 
-      # Step 6 — Salva l’immagine Docker in un file tar.gz
-      # cosi può essere trasferita a un altro job
-      - name: Save Docker image as artifact
+      - name: Login to Docker Hub
+        run: echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login -u "${{ secrets.DOCKERHUB_USERNAME }}" --password-stdin
+
+      - name: Push images
         run: |
-          docker save its-node-demo:latest | gzip > image.tar.gz
-
-      # Step 7 — Carica l’immagine salvata come artifact del workflow
-      # Così il job DEPLOY potrà scaricarla
-      - name: Upload Docker image artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: docker-image         # Nome dell’artifact
-          path: image.tar.gz         # File da caricare
-          retention-days: 1          # Lo mantiene 1 giorno (per sicurezza)
+          docker push andreac1/its-node-demo:${{ github.sha }}
+          docker push andreac1/its-node-demo:${{ env.DATE_TAG }}
 
   # -------------------------
   # JOB 2 — DEPLOY (CD)
   # -------------------------
   deploy:
     name: Load & Push to Docker Hub
-    needs: build                   # Il job parte SOLO se il job build è riuscito
+    needs: docker-build                   # Il job parte SOLO se il job build è riuscito
     runs-on: ubuntu-latest
     
     # Questo job si attiva SOLO se il push è sul branch "main"
