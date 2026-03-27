@@ -32,7 +32,7 @@ jobs:
 
   build-image:
     needs: test-matrix
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, docker]
 
     env:
       IMAGE_NAME: its-node-demo
