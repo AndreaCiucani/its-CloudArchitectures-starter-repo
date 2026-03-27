@@ -48,6 +48,9 @@ jobs:
       # (Opzionale) Abilitare se dovete pushare su Docker Hub
       - name: Login to Docker Hub
         run: echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login -u "${{ secrets.DOCKERHUB_USERNAME }}" --password-stdin
+      
+      - name: tag image for Docker Hub
+        run: docker tag $IMAGE_NAME:$TAG ${{ secrets.DOCKERHUB_USERNAME }}/$IMAGE_NAME:$TAG
 
       - name: Push image
-        run: docker push $IMAGE_NAME:$TAG
+        run: docker push ${{ secrets.DOCKERHUB_USERNAME }}/$IMAGE_NAME:$TAG
