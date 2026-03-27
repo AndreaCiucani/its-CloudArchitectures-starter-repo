@@ -45,12 +45,34 @@ jobs:
       - name: Build Docker image
         run: docker build -t $IMAGE_NAME:$TAG .
 
-      # (Opzionale) Abilitare se dovete pushare su Docker Hub
       - name: Login to Docker Hub
         run: echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login -u "${{ secrets.DOCKERHUB_USERNAME }}" --password-stdin
-      
-      - name: tag image for Docker Hub
-        run: docker tag $IMAGE_NAME:$TAG ${{ secrets.DOCKERHUB_USERNAME }}/$IMAGE_NAME:$TAG
+
+      - name: Tag image for Docker Hub
+        run: |
+          docker tag $IMAGE_NAME:$TAG ${{ secrets.DOCKERHUB_USERNAME }}/$IMAGE_NAME:$TAG
 
       - name: Push image
-        run: docker push ${{ secrets.DOCKERHUB_USERNAME }}/$IMAGE_NAME:$TAG
+        run: |
+          docker push ${{ secrets.DOCKERHUB_USERNAME }}/$IMAGE_NAME:$TAG
+
+
+       # Deploy su PC locale tramite SSH attraverso Ngrok
+  deploy-local:
+    needs: build-image
+    runs-on: [self-hosted, docker]
+    with:
+      script: |
+        echo ">>> Docker Login"
+        docker login -u "${{ secrets.DOCKERHUB_USERNAME }}" -p "${{ secrets.DOCKERHUB_TOKEN }}
+        echo ">>> Pull immagine aggiornata"
+        docker pull ${{ secrets.DOCKERHUB_USERNAME }}/its-node-demo:lates
+        echo ">>> Stop container precedente"
+        docker stop its-node-demo || tru
+        echo ">>> Rimozione container"
+        docker rm its-node-demo || true        
+        echo ">>> Avvio nuovo container"
+        docker run -d \
+          -p 8181:3000 \
+          --name its-node-demo \
+          ${{ secrets.DOCKERHUB_USERNAME }}/its-node-demo:latest
