@@ -62,6 +62,10 @@ jobs:
     needs: build-image
     runs-on: self-hosted
 
+    env:
+      IMAGE_NAME: its-node-demo
+      TAG: ${{ github.sha }}
+
     steps:
       - name: Deploy to local machine
         shell: powershell  
@@ -69,10 +73,10 @@ jobs:
           echo ">>> Docker Login"
           docker login -u "${{ secrets.DOCKERHUB_USERNAME }}" -p "${{ secrets.DOCKERHUB_TOKEN }}"
           echo ">>> Pull immagine aggiornata"
-          docker pull ${{ secrets.DOCKERHUB_USERNAME }}/its-node-demo:latest
+          docker pull ${{ secrets.DOCKERHUB_USERNAME }}/${{env.IMAGE_NAME}}:${{env.TAG }}
           echo ">>> Stop container precedente"
-          docker stop its-node-demo || true
+          docker stop its-node-demo
           echo ">>> Rimozione container"
-          docker rm its-node-demo || true        
+          docker rm its-node-demo       
           echo ">>> Avvio nuovo container"
-          docker run -d -p 8181:3000 --name its-node-demo ${{ secrets.DOCKERHUB_USERNAME }}/its-node-demo:latest
+          docker run -d -p 8181:3000 --name its-node-demo ${{ secrets.DOCKERHUB_USERNAME }}/${{env.IMAGE_NAME}}:${{env.TAG }}
