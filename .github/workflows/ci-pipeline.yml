@@ -57,7 +57,7 @@ jobs:
           docker push ${{ secrets.DOCKERHUB_USERNAME }}/$IMAGE_NAME:$TAG
 
 
-       # Deploy su PC locale tramite SSH attraverso Ngrok
+       # Deploy su PC locale tramite SSH attraverso Ngrok s
   deploy-local:
     needs: build-image
     runs-on: self-hosted
