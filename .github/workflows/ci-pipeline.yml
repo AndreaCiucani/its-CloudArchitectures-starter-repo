@@ -43,7 +43,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Build Docker image
-        run: docker build -t ${{env.IMAGE_NAME}}:${{env.TAG }}.
+        run: docker build -t ${{env.IMAGE_NAME}}:${{env.TAG }} .
 
       - name: Login to Docker Hub
         run: echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login -u "${{ secrets.DOCKERHUB_USERNAME }}" --password-stdin
