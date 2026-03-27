@@ -32,7 +32,7 @@ jobs:
 
   build-image:
     needs: test-matrix
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
 
     env:
       IMAGE_NAME: its-node-demo
@@ -43,18 +43,18 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Build Docker image
-        run: docker build -t $IMAGE_NAME:$TAG .
+        run: docker build -t ${{env.IMAGE_NAME}}:${{env.TAG }}.
 
       - name: Login to Docker Hub
         run: echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login -u "${{ secrets.DOCKERHUB_USERNAME }}" --password-stdin
 
       - name: Tag image for Docker Hub
         run: |
-          docker tag $IMAGE_NAME:$TAG ${{ secrets.DOCKERHUB_USERNAME }}/$IMAGE_NAME:$TAG
+          docker tag ${{env.IMAGE_NAME}}:${{env.TAG }} ${{ secrets.DOCKERHUB_USERNAME }}/${{env.IMAGE_NAME}}:${{env.TAG }}
 
       - name: Push image
         run: |
-          docker push ${{ secrets.DOCKERHUB_USERNAME }}/$IMAGE_NAME:$TAG
+          docker push ${{ secrets.DOCKERHUB_USERNAME }}/${{env.IMAGE_NAME}}:${{env.TAG }}
 
 
        # Deploy su PC locale tramite SSH attraverso Ngrok s
