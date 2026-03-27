@@ -32,7 +32,7 @@ jobs:
 
   build-image:
     needs: test-matrix
-    runs-on: [self-hosted, docker]
+    runs-on: self-hosted
 
     env:
       IMAGE_NAME: its-node-demo
@@ -60,7 +60,7 @@ jobs:
        # Deploy su PC locale tramite SSH attraverso Ngrok
   deploy-local:
     needs: build-image
-    runs-on: [self-hosted, docker]
+    runs-on: self-hosted
 
     steps:
       - name: Deploy to local machine
